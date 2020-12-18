@@ -198,10 +198,10 @@ export default {
       this.events = events;
     },
     async addEvent() {
-      if (this.name && this.start && this.end) {
+      if (this.name) {
         await db.collection("calEvent").add({
           name: this.name,
-          details: this.detail,
+          details: this.details,
           start: this.start,
           end: this.end,
           color: this.color,
