@@ -3,6 +3,9 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
+          <v-btn color="primary" class="mr-4" @click="dialog = true" dark>
+            New Event
+          </v-btn>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
@@ -47,6 +50,49 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
+
+      <v-dialog v-model="dialog" max-width="500">
+        <v-card>
+          <v-container>
+            <v-form @submit.prevent="addEvent">
+              <v-text-field
+                v-model="name"
+                type="text"
+                label="event name (required)"
+              ></v-text-field>
+              <v-text-field
+                v-model="details"
+                type="text"
+                label="event detail"
+              ></v-text-field>
+              <v-text-field
+                v-model="start"
+                type="date"
+                label="event start (required)"
+              ></v-text-field>
+              <v-text-field
+                v-model="end"
+                type="date"
+                label="event end (required)"
+              ></v-text-field>
+              <v-text-field
+                v-model="color"
+                type="color"
+                label="event color (click to open color menue)"
+              ></v-text-field>
+              <v-btn
+                type="submit"
+                color="primary"
+                class="mr-4"
+                @click.stop="dialog = false"
+              >
+                Create Event
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+
       <v-sheet height="600">
         <v-calendar
           ref="calendar"
@@ -150,6 +196,25 @@ export default {
         events.push(appData);
       });
       this.events = events;
+    },
+    async addEvent() {
+      if (this.name && this.start && this.end) {
+        await db.collection("calEvent").add({
+          name: this.name,
+          details: this.detail,
+          start: this.start,
+          end: this.end,
+          color: this.color,
+        });
+        this.getEvents();
+        this.name = "";
+        this.details = "";
+        this.start = "";
+        this.end = "";
+        this.color = "";
+      } else {
+        alert("Name, start and end are required!");
+      }
     },
     async updateEvent(ev) {
       await db
